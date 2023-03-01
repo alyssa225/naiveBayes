@@ -146,7 +146,7 @@ def test_smoothing():
 
         # Zero beta values should be smoothed to log(1 / (8 + 5 * smoothing))
         target_val = np.log(smoothing) - np.log(8 + 5 * smoothing)
-        assert nb.beta[4, 0] == target_val, (nb.beta[4, 0], target_val)
+        assert np.isclose(nb.beta[4, 0], target_val), (nb.beta[4, 0], target_val)
 
     # When smoothing is near-infinite, probabilities should all be 0.5
     assert np.isclose(prob, 0.5)
