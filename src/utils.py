@@ -15,20 +15,8 @@ def softmax(x, axis=1):
         axis=1 as the default.
     """
     x = np.atleast_2d(x)
-    sm = np.zeros((x.shape[0],x.shape[1]))
-    x = x - np.max(x)
-    print('x: ',x)
-    if axis == 1:
-        # x = np.flip(x)
-        for i in range(x.shape[0]):
-            d = np.sum(np.exp(x[i,:]))
-            for j in range(x.shape[1]):
-                sm[i,j] = np.exp(x[i,j])/d
-    elif axis == 0:
-        for i in range(x.shape[1]):
-            d = np.sum(np.exp(x[:,i]))
-            for j in range(x.shape[0]):
-                sm[j,i] = np.exp(x[j,i])/d
+    x = x - np.max(x, axis = axis, keepdims=True)
+    sm = np.exp(x)/np.exp(x).sum(axis = axis, keepdims = True)
     print('softmax: ', sm)
     return sm
 
@@ -71,5 +59,19 @@ def stable_log_sum(X):
     """
     # You can assume that this array is of shape (K, 2)
     assert X.shape[1] == 2 and len(X.shape) == 2
+    print(X)
+    
+    # log_sm = np.zeros(())
+    if (X>-743).all():
+        log_sm = np.sum(np.log(np.sum(np.exp(X), axis=1)))
+        print('log: ', log_sm)
+    else:
+        log_sm = 0
+        for i in range(X.shape[0]):
+            if (X[i,:]>-743).all():
+                log_sm = log_sm + np.log(np.sum(np.exp(X[i,:])))
+            else:
+                a=np.max([X[i, 0], X[i, 1]])
+                log_sm = log_sm + a
 
-    raise NotImplementedError
+    return log_sm
