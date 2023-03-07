@@ -29,7 +29,7 @@ def sparse_to_numpy(X):
     Returns:
         2D numpy matrix with the same data as X
     """
-    raise NotImplementedError
+    return X.todense()
 
 
 def sparse_multiplication(X, Y):
@@ -72,5 +72,4 @@ def sparse_multiplication(X, Y):
     Returns:
         2D sparse matrix or 2D numpy array resulting from multiplying X and Y
     """
-
-    raise NotImplementedError
+    return X*Y

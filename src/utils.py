@@ -15,8 +15,24 @@ def softmax(x, axis=1):
         axis=1 as the default.
     """
     x = np.atleast_2d(x)
+    sm = np.zeros((x.shape[0],x.shape[1]))
+    x = x - np.max(x)
+    print('x: ',x)
+    if axis == 1:
+        # x = np.flip(x)
+        for i in range(x.shape[0]):
+            d = np.sum(np.exp(x[i,:]))
+            for j in range(x.shape[1]):
+                sm[i,j] = np.exp(x[i,j])/d
+    elif axis == 0:
+        for i in range(x.shape[1]):
+            d = np.sum(np.exp(x[:,i]))
+            for j in range(x.shape[0]):
+                sm[j,i] = np.exp(x[j,i])/d
+    print('softmax: ', sm)
+    return sm
 
-    raise NotImplementedError
+    
 
 def stable_log_sum(X):
     """
