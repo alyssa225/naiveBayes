@@ -1,0 +1,11 @@
+============================= test session starts ==============================
+platform linux -- Python 3.9.16, pytest-7.2.1, pluggy-1.0.0
+rootdir: /workspace
+collected 15 items
+tests/test_a_environment.py .                                            [  6%]
+tests/test_a_setup.py .                                                  [ 13%]
+tests/test_frq1.py .                                                     [ 20%]
+tests/test_naive_bayes.py ........                                       [ 73%]
+tests/test_scipy.py ..                                                   [ 86%]
+tests/test_utils.py ..                                                   [100%]
+============================= 15 passed in 10.67s ==============================
