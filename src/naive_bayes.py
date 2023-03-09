@@ -115,22 +115,6 @@ class NaiveBayes:
         bn0 = np.zeros((1,vocab_size))
         bd1 = 0
         bd0 = 0
-        # M1 = 0
-        # M0 = 0
-        # # M1 = vocab_size*y1
-        # # M0 = vocab_size*y0
-        # for i in range(n_docs):
-        #     for j in range(vocab_size):
-        #         if y[i] == 1:
-        #             M1 = M1 + np.sum(X[i,:])
-        #         else:
-        #             M0 = M0 + np.sum(X[i,:])
-        
-        # k = np.sum(X,axis=0)
-        # b0 = np.log((k+self.smoothing)/(M0+self.smoothing*vocab_size))
-        # b1 = np.log((k+self.smoothing)/(M1+self.smoothing*vocab_size))
-        # self.beta = np.array(np.concatenate((b0,b1),axis=0))
-        
         for i in range(X.shape[0]):
             # print('i: ', i)
             if y[i] == 1:
@@ -149,18 +133,6 @@ class NaiveBayes:
         
         # print('shape bp0 :', bp0.shape)
         self.beta = np.array(np.log(np.column_stack((bp0,bp1))))
-        
-       
-        # for j in range(vocab_size):    
-        #     for i in range(n_docs):
-        #         if y[i] == 1:
-        #             bn1[1,j] = bn1[1,j] + X[i,j]
-        #             bd1 = bd1 + X[i,j]
-        #         elif y[i]==0:
-        #             bn0[1,j] = bn0[1,j] +  X[i,j]
-        #             bd0 = bd0 + X[i,j]
-        # self.beta = mp.array(np.concatenate([np.log(bn0+self.smoothing/bd0+self.smoothing*vocab_size),np.log(bn1+self.smoothing/bd1+self.smoothing*vocab_size)]))
-        # print('beta: ', self.beta)
         return None
 
     def likelihood(self, X, y):
@@ -184,9 +156,10 @@ class NaiveBayes:
         # print("y: ",y)
         n_docs, vocab_size = X.shape
         n_labels = 2
-        xb = np.zeros((n_docs,2))
-        
-        for i in range(n_docs):
+        X = X[~np.isnan(y),:]
+        y = y[~np.isnan(y)]
+        xb = np.zeros((X.shape[0],2))
+        for i in range(X.shape[0]):
             for k in range(self.beta.shape[1]):
                 xbsum = 0
                 for j in range(vocab_size): 

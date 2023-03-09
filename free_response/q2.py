@@ -27,8 +27,7 @@ def q2a():
         "data", num_docs=100, max_words=2000, vocab_size=1000)
     nbem = NaiveBayesEM(max_iter=10)
     nbem.fit(data, labels)
-
-    raise NotImplementedError
+    return f
 
 
 def q2b():

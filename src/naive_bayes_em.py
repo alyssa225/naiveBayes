@@ -101,17 +101,15 @@ class NaiveBayesEM(NaiveBayes):
             return
         else:
             for i in range(self.max_iter):
-                prob = self.predict_proba(X)
-                prob[np.where(y==1),0] = 0
-                prob[np.where(y==1),1] = 1
-                prob[np.where(y==0),0] = 1
-                prob[np.where(y==0),1] = 0
+                self.prob = self.predict_proba(X)
+                self.prob[np.where(y==1),:] = [0,1]
+                self.prob[np.where(y==0),:] = [1,0]
                 # print('vocab: ', vocab_size)
                 # print('ndoc: ', n_docs)
                 # print('pribability: ',prob)
-                self.alpha =np.log(np.sum(prob, axis = 0)/n_docs)
+                self.alpha =np.log(np.sum(self.prob, axis = 0)/n_docs)
                 # print('alpha: ', self.alpha )
-                bn1 = X.T@prob
+                bn1 = X.T@self.prob
                 # print('beta top: ', bn1)
                 bd1 = np.sum(bn1,axis=0)
                 # print('beta bottom: ', bd1)
@@ -159,9 +157,6 @@ class NaiveBayesEM(NaiveBayes):
         Args: X, a sparse matrix of word counts; Y, an array of labels
         Returns: the log likelihood of the data.
         """
-        # for i in range(X.shape[0]):
-        #     if np.isnan(y[i])==False:
-        #         if 
 
         assert hasattr(self, "alpha") and hasattr(self, "beta"), "Model not fit!"
 
@@ -184,8 +179,5 @@ class NaiveBayesEM(NaiveBayes):
         if isinf == 1:
             ll = -np.inf
         else:
-            # ll = stable_log_sum(self.alpha+xb)
-
-            ll = stable_log_sum(self.alpha+xb+np.log(self.predict_proba(X)))
-            # ll = np.sum(ll) 
+            ll = stable_log_sum(self.alpha+xb+np.log(self.prob))
         return ll
