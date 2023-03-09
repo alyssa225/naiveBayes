@@ -1,0 +1,49 @@
+============================= test session starts ==============================
+platform linux -- Python 3.9.16, pytest-7.2.1, pluggy-1.0.0
+rootdir: /workspace
+collected 15 items
+tests/test_a_environment.py .                                            [  6%]
+tests/test_a_setup.py .                                                  [ 13%]
+tests/test_frq1.py F                                                     [ 20%]
+tests/test_naive_bayes.py .FF...FF                                       [ 73%]
+tests/test_scipy.py ..                                                   [ 86%]
+tests/test_utils.py ..                                                   [100%]
+=================================== FAILURES ===================================
+__________________________________ test_frq1 ___________________________________
+>           naive_bayes_em.fit(data, labels)
+tests/test_frq1.py:35:
+>               raise ValueError('dimension mismatch')
+E               ValueError: dimension mismatch
+/usr/local/lib/python3.9/site-packages/scipy/sparse/_base.py:577: ValueError
+_____________________________ test_tiny_dataset_b ______________________________
+>       help_test_tiny_dataset(NaiveBayesEM)
+tests/test_naive_bayes.py:23:
+>               raise ValueError('dimension mismatch')
+E               ValueError: dimension mismatch
+/usr/local/lib/python3.9/site-packages/scipy/sparse/_base.py:577: ValueError
+__________________________ test_alpha_beta_normalized __________________________
+>                   assert np.isclose(est, 1), f"{est} != 1"
+E                   AssertionError: 2.0 != 1
+E                   assert False
+E                    +  where False = <function isclose at 0x7fdc3d70f670>(2.0, 1)
+E                    +    where <function isclose at 0x7fdc3d70f670> = np.isclose
+tests/test_naive_bayes.py:101: AssertionError
+________________________________ test_em_basics ________________________________
+>           nbem.fit(train_data, train_labels)
+tests/test_naive_bayes.py:207:
+>               raise ValueError('dimension mismatch')
+E               ValueError: dimension mismatch
+/usr/local/lib/python3.9/site-packages/scipy/sparse/_base.py:577: ValueError
+_________________________ test_comparison_naive_bayes __________________________
+>       nb2.fit(train_data, train_labels)
+tests/test_naive_bayes.py:239:
+>               raise ValueError('dimension mismatch')
+E               ValueError: dimension mismatch
+/usr/local/lib/python3.9/site-packages/scipy/sparse/_base.py:577: ValueError
+=========================== short test summary info ============================
+FAILED tests/test_frq1.py::test_frq1 - ValueError: dimension mismatch
+FAILED tests/test_naive_bayes.py::test_tiny_dataset_b - ValueError: dimension...
+FAILED tests/test_naive_bayes.py::test_alpha_beta_normalized - AssertionError...
+FAILED tests/test_naive_bayes.py::test_em_basics - ValueError: dimension mism...
+FAILED tests/test_naive_bayes.py::test_comparison_naive_bayes - ValueError: d...
+========================= 5 failed, 10 passed in 4.88s =========================
