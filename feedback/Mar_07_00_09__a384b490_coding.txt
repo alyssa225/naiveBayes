@@ -1,0 +1,76 @@
+============================= test session starts ==============================
+platform linux -- Python 3.9.16, pytest-7.2.1, pluggy-1.0.0
+rootdir: /workspace
+collected 15 items
+tests/test_a_environment.py .                                            [  6%]
+tests/test_a_setup.py .                                                  [ 13%]
+tests/test_frq1.py F                                                     [ 20%]
+tests/test_naive_bayes.py FFFFFFFF                                       [ 73%]
+tests/test_scipy.py ..                                                   [ 86%]
+tests/test_utils.py ..                                                   [100%]
+=================================== FAILURES ===================================
+__________________________________ test_frq1 ___________________________________
+>       naive_bayes.fit(data, labels)
+tests/test_frq1.py:24:
+>       raise NotImplementedError
+E       NotImplementedError
+src/naive_bayes.py:103: NotImplementedError
+_____________________________ test_tiny_dataset_a ______________________________
+>       help_test_tiny_dataset(NaiveBayes)
+tests/test_naive_bayes.py:15:
+>       raise NotImplementedError
+E       NotImplementedError
+src/naive_bayes.py:103: NotImplementedError
+_____________________________ test_tiny_dataset_b ______________________________
+>       help_test_tiny_dataset(NaiveBayesEM)
+tests/test_naive_bayes.py:23:
+>       raise NotImplementedError
+E       NotImplementedError
+src/naive_bayes_em.py:50: NotImplementedError
+__________________________ test_alpha_beta_normalized __________________________
+>               nb.fit(X, y)
+tests/test_naive_bayes.py:87:
+>       raise NotImplementedError
+E       NotImplementedError
+src/naive_bayes.py:103: NotImplementedError
+________________________________ test_smoothing ________________________________
+>       nb.fit(X, train_y)
+tests/test_naive_bayes.py:120:
+>       raise NotImplementedError
+E       NotImplementedError
+src/naive_bayes.py:103: NotImplementedError
+_______________________________ test_without_em ________________________________
+>       nb.fit(train_data, train_labels)
+tests/test_naive_bayes.py:161:
+>       raise NotImplementedError
+E       NotImplementedError
+src/naive_bayes.py:103: NotImplementedError
+____________________________ test_em_initialization ____________________________
+>       nbem.initialize_params(train_data.shape[1], 2)
+tests/test_naive_bayes.py:183:
+>       raise NotImplementedError
+E       NotImplementedError
+src/naive_bayes_em.py:50: NotImplementedError
+________________________________ test_em_basics ________________________________
+>           nbem.fit(train_data, train_labels)
+tests/test_naive_bayes.py:207:
+>       raise NotImplementedError
+E       NotImplementedError
+src/naive_bayes_em.py:50: NotImplementedError
+_________________________ test_comparison_naive_bayes __________________________
+>       nb1.fit(train_data, train_labels)
+tests/test_naive_bayes.py:232:
+>       raise NotImplementedError
+E       NotImplementedError
+src/naive_bayes.py:103: NotImplementedError
+=========================== short test summary info ============================
+FAILED tests/test_frq1.py::test_frq1 - NotImplementedError
+FAILED tests/test_naive_bayes.py::test_tiny_dataset_a - NotImplementedError
+FAILED tests/test_naive_bayes.py::test_tiny_dataset_b - NotImplementedError
+FAILED tests/test_naive_bayes.py::test_alpha_beta_normalized - NotImplemented...
+FAILED tests/test_naive_bayes.py::test_smoothing - NotImplementedError
+FAILED tests/test_naive_bayes.py::test_without_em - NotImplementedError
+FAILED tests/test_naive_bayes.py::test_em_initialization - NotImplementedError
+FAILED tests/test_naive_bayes.py::test_em_basics - NotImplementedError
+FAILED tests/test_naive_bayes.py::test_comparison_naive_bayes - NotImplemente...
+========================= 9 failed, 6 passed in 3.91s ==========================
