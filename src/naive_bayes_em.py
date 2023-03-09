@@ -93,8 +93,9 @@ class NaiveBayesEM(NaiveBayes):
         n_docs, vocab_size = X.shape
         n_labels = 2
         self.vocab_size = vocab_size
-        print('X: ', X)
-        print('y: ', y)
+        prev_ll = np.inf
+        # print('X: ', X)
+        # print('y: ', y)
         self.initialize_params(vocab_size, n_labels)
         if self.max_iter == 0:
             return
@@ -105,33 +106,24 @@ class NaiveBayesEM(NaiveBayes):
                 prob[np.where(y==1),1] = 1
                 prob[np.where(y==0),0] = 1
                 prob[np.where(y==0),1] = 0
-                print('pribability: ',prob)
-                self.alpha =np.log(np.sum(prob, axis = 0))
-                print('alpha: ', self.alpha )
-                bn1 = X*prob
-                # bn0 = np.zeros((1,vocab_size))
-                bd1 = np.sum(X*prob)
-                # bd0 = 0
-                # for i in range(X.shape[0]):
-                    # bn1 = bn1+X[i,:]*prob[i,:]
-                #     print('i: ', i)
-                #     if y[i] == 1:
-                #         bn1 = bn1+X[i,:]
-                #     elif y[i] == 0:
-                #         bn0 = bn0+X[i,:]
-                    # for j in range(X.shape[1]):
-                        # bd1 = 
-                #         if y[i] == 1:
-                #             # bn1 = bn1+X[i,:]
-                #             bd1 = bd1+X[i,j]
-                #         elif y[i] == 0:
-                #             # bn0 = bn0+X[i,:]
-                #             bd0 = bd0+X[i,j]
-                # bp0 = ((bn0+self.smoothing)/(bd0+self.smoothing*vocab_size)).reshape((vocab_size,1))
-                # bp1 = ((bn1+self.smoothing)/(bd1+self.smoothing*vocab_size)).reshape((vocab_size,1))
-                
-                # print('shape bp0 :', bp0.shape)
-                # self.beta = np.array(np.log(np.column_stack((bp0,bp1))))
+                # print('vocab: ', vocab_size)
+                # print('ndoc: ', n_docs)
+                # print('pribability: ',prob)
+                self.alpha =np.log(np.sum(prob, axis = 0)/n_docs)
+                # print('alpha: ', self.alpha )
+                bn1 = X.T@prob
+                # print('beta top: ', bn1)
+                bd1 = np.sum(bn1,axis=0)
+                # print('beta bottom: ', bd1)
+                self.beta = np.log((bn1+self.smoothing)/(bd1+self.smoothing*vocab_size))
+                # print('beta size: ', self.beta.shape)
+                # print('beta: ', type(self.beta))
+                ll = self.likelihood(X,y)
+                if np.isclose(prev_ll, ll):
+                    return
+                else:
+                    prev_ll = ll
+     
 
     def likelihood(self, X, y):
         r"""
@@ -175,5 +167,25 @@ class NaiveBayesEM(NaiveBayes):
 
         n_docs, vocab_size = X.shape
         n_labels = 2
+        xb = np.zeros((n_docs,2))
+        
+        for i in range(n_docs):
+            for k in range(self.beta.shape[1]):
+                xbsum = 0
+                for j in range(vocab_size): 
+                    if X[i,j]==0 and self.beta[j,k]==-np.inf:
+                        xbsum += 0
+                    else:
+                        xbsum += X[i,j]*self.beta[j,k]
+                xb[i,k] = xbsum
+        isinf= 0
+        if (xb[np.where(y==1)][:,1] == -np.inf).any() or (xb[np.where(y==0)][:,0] == -np.inf).any():
+            isinf = 1
+        if isinf == 1:
+            ll = -np.inf
+        else:
+            # ll = stable_log_sum(self.alpha+xb)
 
-        raise NotImplementedError
+            ll = stable_log_sum(self.alpha+xb+np.log(self.predict_proba(X)))
+            # ll = np.sum(ll) 
+        return ll

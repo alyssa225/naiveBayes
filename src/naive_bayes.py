@@ -56,7 +56,7 @@ class NaiveBayes:
 
         assert hasattr(self, "alpha") and hasattr(self, "beta"), "Model not fit!"
         assert vocab_size == self.vocab_size, "Vocab size mismatch"
-        p = X*self.beta
+        p = X@self.beta
         z = self.alpha+p
         return softmax(z)
         
@@ -110,7 +110,7 @@ class NaiveBayes:
         y0 = (y[y==0]).shape[0]
         self.alpha[1] = np.log(y1/n_docs)
         self.alpha[0] = np.log(y0/n_docs)
-        print('alpha: ', self.alpha)
+        # print('alpha: ', self.alpha)
         bn1 = np.zeros((1,vocab_size))
         bn0 = np.zeros((1,vocab_size))
         bd1 = 0
@@ -132,7 +132,7 @@ class NaiveBayes:
         # self.beta = np.array(np.concatenate((b0,b1),axis=0))
         
         for i in range(X.shape[0]):
-            print('i: ', i)
+            # print('i: ', i)
             if y[i] == 1:
                 bn1 = bn1+X[i,:]
             elif y[i] == 0:
@@ -147,7 +147,7 @@ class NaiveBayes:
         bp0 = ((bn0+self.smoothing)/(bd0+self.smoothing*vocab_size)).reshape((vocab_size,1))
         bp1 = ((bn1+self.smoothing)/(bd1+self.smoothing*vocab_size)).reshape((vocab_size,1))
         
-        print('shape bp0 :', bp0.shape)
+        # print('shape bp0 :', bp0.shape)
         self.beta = np.array(np.log(np.column_stack((bp0,bp1))))
         
        
@@ -160,7 +160,7 @@ class NaiveBayes:
         #             bn0[1,j] = bn0[1,j] +  X[i,j]
         #             bd0 = bd0 + X[i,j]
         # self.beta = mp.array(np.concatenate([np.log(bn0+self.smoothing/bd0+self.smoothing*vocab_size),np.log(bn1+self.smoothing/bd1+self.smoothing*vocab_size)]))
-        print('beta: ', self.beta)
+        # print('beta: ', self.beta)
         return None
 
     def likelihood(self, X, y):
@@ -180,22 +180,10 @@ class NaiveBayes:
         Returns: the log likelihood of the data
         """
         assert hasattr(self, "alpha") and hasattr(self, "beta"), "Model not fit!"
-        print("x: ",X)
-        print("y: ",y)
+        # print("x: ",X)
+        # print("y: ",y)
         n_docs, vocab_size = X.shape
         n_labels = 2
-        # a = np.sum(self.alpha)
-        # b=0
-        # print('llalpha: ', a)
-        # xb = X*self.beta
-        # print('x*beta: ', xb)
-        # for i in range(n_docs):
-        #     if y[i] == 1:
-        #         b = b + xb[i,1]
-        #     elif y[i] == 0:
-        #         b = b + xb[i,0]
-        # ll = a+b
-        # print('ll: ', ll)
         xb = np.zeros((n_docs,2))
         
         for i in range(n_docs):
