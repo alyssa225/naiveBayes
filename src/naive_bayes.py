@@ -1,7 +1,7 @@
 import numpy as np
 import warnings
 
-from src.utils import softmax
+from src.utils import softmax, stable_log_sum
 
 
 class NaiveBayes:
@@ -56,8 +56,10 @@ class NaiveBayes:
 
         assert hasattr(self, "alpha") and hasattr(self, "beta"), "Model not fit!"
         assert vocab_size == self.vocab_size, "Vocab size mismatch"
-
-        raise NotImplementedError
+        p = X*self.beta
+        z = self.alpha+p
+        return softmax(z)
+        
 
     def fit(self, X, y):
         """
@@ -98,9 +100,68 @@ class NaiveBayes:
         """
         n_docs, vocab_size = X.shape
         n_labels = 2
+        # print('x: ',X)
+        # print('y: ', y.shape)
         self.vocab_size = vocab_size
-
-        raise NotImplementedError
+        self.alpha = np.zeros((n_labels,))
+        # y=y[~np.isnan(y)]
+        # self.beta = np.zeros((vocab_size,n_labels))
+        y1 = (y[y==1]).shape[0]
+        y0 = (y[y==0]).shape[0]
+        self.alpha[1] = np.log(y1/n_docs)
+        self.alpha[0] = np.log(y0/n_docs)
+        print('alpha: ', self.alpha)
+        bn1 = np.zeros((1,vocab_size))
+        bn0 = np.zeros((1,vocab_size))
+        bd1 = 0
+        bd0 = 0
+        # M1 = 0
+        # M0 = 0
+        # # M1 = vocab_size*y1
+        # # M0 = vocab_size*y0
+        # for i in range(n_docs):
+        #     for j in range(vocab_size):
+        #         if y[i] == 1:
+        #             M1 = M1 + np.sum(X[i,:])
+        #         else:
+        #             M0 = M0 + np.sum(X[i,:])
+        
+        # k = np.sum(X,axis=0)
+        # b0 = np.log((k+self.smoothing)/(M0+self.smoothing*vocab_size))
+        # b1 = np.log((k+self.smoothing)/(M1+self.smoothing*vocab_size))
+        # self.beta = np.array(np.concatenate((b0,b1),axis=0))
+        
+        for i in range(X.shape[0]):
+            print('i: ', i)
+            if y[i] == 1:
+                bn1 = bn1+X[i,:]
+            elif y[i] == 0:
+                bn0 = bn0+X[i,:]
+            for j in range(X.shape[1]):
+                if y[i] == 1:
+                    # bn1 = bn1+X[i,:]
+                    bd1 = bd1+X[i,j]
+                elif y[i] == 0:
+                    # bn0 = bn0+X[i,:]
+                    bd0 = bd0+X[i,j]
+        bp0 = ((bn0+self.smoothing)/(bd0+self.smoothing*vocab_size)).reshape((vocab_size,1))
+        bp1 = ((bn1+self.smoothing)/(bd1+self.smoothing*vocab_size)).reshape((vocab_size,1))
+        
+        print('shape bp0 :', bp0.shape)
+        self.beta = np.array(np.log(np.column_stack((bp0,bp1))))
+        
+       
+        # for j in range(vocab_size):    
+        #     for i in range(n_docs):
+        #         if y[i] == 1:
+        #             bn1[1,j] = bn1[1,j] + X[i,j]
+        #             bd1 = bd1 + X[i,j]
+        #         elif y[i]==0:
+        #             bn0[1,j] = bn0[1,j] +  X[i,j]
+        #             bd0 = bd0 + X[i,j]
+        # self.beta = mp.array(np.concatenate([np.log(bn0+self.smoothing/bd0+self.smoothing*vocab_size),np.log(bn1+self.smoothing/bd1+self.smoothing*vocab_size)]))
+        print('beta: ', self.beta)
+        return None
 
     def likelihood(self, X, y):
         r"""
@@ -119,8 +180,41 @@ class NaiveBayes:
         Returns: the log likelihood of the data
         """
         assert hasattr(self, "alpha") and hasattr(self, "beta"), "Model not fit!"
-
+        print("x: ",X)
+        print("y: ",y)
         n_docs, vocab_size = X.shape
         n_labels = 2
-
-        raise NotImplementedError
+        # a = np.sum(self.alpha)
+        # b=0
+        # print('llalpha: ', a)
+        # xb = X*self.beta
+        # print('x*beta: ', xb)
+        # for i in range(n_docs):
+        #     if y[i] == 1:
+        #         b = b + xb[i,1]
+        #     elif y[i] == 0:
+        #         b = b + xb[i,0]
+        # ll = a+b
+        # print('ll: ', ll)
+        xb = np.zeros((n_docs,2))
+        
+        for i in range(n_docs):
+            for k in range(self.beta.shape[1]):
+                xbsum = 0
+                for j in range(vocab_size): 
+                    if X[i,j]==0 and self.beta[j,k]==-np.inf:
+                        xbsum += 0
+                    else:
+                        xbsum += X[i,j]*self.beta[j,k]
+                xb[i,k] = xbsum
+        isinf= 0
+        if (xb[np.where(y==1)][:,1] == -np.inf).any() or (xb[np.where(y==0)][:,0] == -np.inf).any():
+            isinf = 1
+        if isinf == 1:
+            ll = -np.inf
+        else:
+            ll = stable_log_sum(self.alpha+xb)
+            # ll = np.sum(ll) 
+              
+        return ll
+        

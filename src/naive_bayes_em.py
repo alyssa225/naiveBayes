@@ -46,8 +46,8 @@ class NaiveBayesEM(NaiveBayes):
             for all j, k.
 
         """
-
-        raise NotImplementedError
+        self.alpha = np.ones((1,2))*-np.log(n_labels)
+        self.beta = np.ones((vocab_size,2))*-np.log(vocab_size)
 
     def fit(self, X, y):
         """
@@ -93,10 +93,45 @@ class NaiveBayesEM(NaiveBayes):
         n_docs, vocab_size = X.shape
         n_labels = 2
         self.vocab_size = vocab_size
-
+        print('X: ', X)
+        print('y: ', y)
         self.initialize_params(vocab_size, n_labels)
-
-        raise NotImplementedError
+        if self.max_iter == 0:
+            return
+        else:
+            for i in range(self.max_iter):
+                prob = self.predict_proba(X)
+                prob[np.where(y==1),0] = 0
+                prob[np.where(y==1),1] = 1
+                prob[np.where(y==0),0] = 1
+                prob[np.where(y==0),1] = 0
+                print('pribability: ',prob)
+                self.alpha =np.log(np.sum(prob, axis = 0))
+                print('alpha: ', self.alpha )
+                bn1 = X*prob
+                # bn0 = np.zeros((1,vocab_size))
+                bd1 = np.sum(X*prob)
+                # bd0 = 0
+                # for i in range(X.shape[0]):
+                    # bn1 = bn1+X[i,:]*prob[i,:]
+                #     print('i: ', i)
+                #     if y[i] == 1:
+                #         bn1 = bn1+X[i,:]
+                #     elif y[i] == 0:
+                #         bn0 = bn0+X[i,:]
+                    # for j in range(X.shape[1]):
+                        # bd1 = 
+                #         if y[i] == 1:
+                #             # bn1 = bn1+X[i,:]
+                #             bd1 = bd1+X[i,j]
+                #         elif y[i] == 0:
+                #             # bn0 = bn0+X[i,:]
+                #             bd0 = bd0+X[i,j]
+                # bp0 = ((bn0+self.smoothing)/(bd0+self.smoothing*vocab_size)).reshape((vocab_size,1))
+                # bp1 = ((bn1+self.smoothing)/(bd1+self.smoothing*vocab_size)).reshape((vocab_size,1))
+                
+                # print('shape bp0 :', bp0.shape)
+                # self.beta = np.array(np.log(np.column_stack((bp0,bp1))))
 
     def likelihood(self, X, y):
         r"""
@@ -132,6 +167,9 @@ class NaiveBayesEM(NaiveBayes):
         Args: X, a sparse matrix of word counts; Y, an array of labels
         Returns: the log likelihood of the data.
         """
+        # for i in range(X.shape[0]):
+        #     if np.isnan(y[i])==False:
+        #         if 
 
         assert hasattr(self, "alpha") and hasattr(self, "beta"), "Model not fit!"
 
