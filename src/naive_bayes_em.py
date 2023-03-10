@@ -121,7 +121,7 @@ class NaiveBayesEM(NaiveBayes):
                     return
                 else:
                     prev_ll = ll
-     
+            return
 
     def likelihood(self, X, y):
         r"""

@@ -27,7 +27,22 @@ def q2a():
         "data", num_docs=100, max_words=2000, vocab_size=1000)
     nbem = NaiveBayesEM(max_iter=10)
     nbem.fit(data, labels)
-    return 
+
+    f = np.exp(nbem.beta[:,1])-np.exp(nbem.beta[:,0])
+    print('f(j): ', f)
+    fmin = np.sort(f)[0:5]
+    fmax = np.sort(f)[-5:]
+    print('fmaxs: ',fmax)
+    print('fmins: ',fmin)
+    fmins_ind = f.argsort()[0:5]
+    fmaxs_ind = f.argsort()[-5:]
+    # print('fmaxs_ind: ',fmaxs_ind)
+    # print('fmins_ind: ',fmins_ind)
+    pos_words = vocab[fmaxs_ind]
+    neg_words = vocab[fmins_ind]
+    print('high value words: ', pos_words)
+    print('low value words: ', neg_words)
+    return f
 
 
 def q2b():

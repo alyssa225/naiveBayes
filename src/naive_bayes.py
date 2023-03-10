@@ -175,7 +175,7 @@ class NaiveBayes:
             ll = -np.inf
         else:
             ll = stable_log_sum(self.alpha+xb)
-            # ll = np.sum(ll) 
+            # ll = np.max(np.sum(self.alpha+xb,axis = 0)) 
               
         return ll
         
